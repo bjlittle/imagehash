@@ -32,8 +32,8 @@ Rotation by 26: 21 Hamming difference
 
 from PIL import Image
 import numpy
-#import scipy.fftpack
-#import pywt
+import scipy.fftpack
+import pywt
 
 def _binary_array_to_hex(arr):
 	"""
@@ -42,7 +42,7 @@ def _binary_array_to_hex(arr):
 	h = 0
 	s = []
 	for i, v in enumerate(arr.flatten()):
-		if v: 
+		if v:
 			h += 2**(i % 8)
 		if (i % 8) == 7:
 			s.append(hex(h)[2:].rjust(2, '0'))
@@ -121,7 +121,6 @@ def phash(image, hash_size=8, highfreq_factor=4):
 
 	@image must be a PIL instance.
 	"""
-	import scipy.fftpack
 	img_size = hash_size * highfreq_factor
 	image = image.convert("L").resize((img_size, img_size), Image.ANTIALIAS)
 	pixels = numpy.array(image.getdata(), dtype=numpy.float).reshape((img_size, img_size))
@@ -139,7 +138,6 @@ def phash_simple(image, hash_size=8, highfreq_factor=4):
 
 	@image must be a PIL instance.
 	"""
-	import scipy.fftpack
 	img_size = hash_size * highfreq_factor
 	image = image.convert("L").resize((img_size, img_size), Image.ANTIALIAS)
 	pixels = numpy.array(image.getdata(), dtype=numpy.float).reshape((img_size, img_size))
@@ -154,7 +152,7 @@ def dhash(image, hash_size=8):
 	Difference Hash computation.
 
 	following http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
-	
+
 	computes differences horizontally
 
 	@image must be a PIL instance.
@@ -187,7 +185,7 @@ def dhash_vertical(image, hash_size=8):
 def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_haar_ll = True):
 	"""
 	Wavelet Hash computation.
-	
+
 	based on https://www.kaggle.com/c/avito-duplicate-ads-detection/
 
 	@image must be a PIL instance.
@@ -199,7 +197,6 @@ def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_ha
 		'db4' - Daubechies wavelets
 	@remove_max_haar_ll - remove the lowest low level (LL) frequency using Haar wavelet.
 	"""
-	import pywt
 	if image_scale is not None:
 		assert image_scale & (image_scale - 1) == 0, "image_scale is not power of 2"
 	else:
@@ -230,4 +227,3 @@ def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_ha
 	med = numpy.median(dwt_low)
 	diff = dwt_low > med
 	return ImageHash(diff)
-
